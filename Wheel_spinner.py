@@ -1,0 +1,17 @@
+import tkinter as tk
+from tkinter import messagebox
+import random
+import math
+
+'''
+CONFIG
+'''
+
+WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 600
+WHEEL_RADIUS = 200
+WHEEL_CENTER = (400, 300)
+BACKGROUND_COLOR = "#90E0F3"
+WHEEL_OUTLINE_COLOR = "#75F4F4"
+POINTER_COLOR = "#B8B3E9"
+COLOR_PALETTE = ["#D999B9","#D17B88"]
