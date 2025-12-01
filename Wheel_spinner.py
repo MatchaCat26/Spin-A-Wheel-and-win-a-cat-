@@ -15,3 +15,160 @@ BACKGROUND_COLOR = "#90E0F3"
 WHEEL_OUTLINE_COLOR = "#75F4F4"
 POINTER_COLOR = "#B8B3E9"
 COLOR_PALETTE = ["#D999B9","#D17B88"]
+
+'''
+APP STATE
+'''
+
+class WheelState:        #This is a constructer, something along those lines
+    def __init__(self):
+        self.choices = []    #list of strings
+        self.color_map = {}    #the map assigns choice to color
+        self.current_angle = 0.0   #degree of the angle of the wheel picker thing-a-ma-bob
+        self.spinning = False   #If the wheel is spinning
+        self.spin_speed = 0.0   #Degrees per frame
+
+state = WheelState()
+
+'''
+MAIN WINDOW
+'''
+
+root = tk.Tk()
+root.title("ZE WHEEL")
+root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
+root.configure(bg = BACKGROUND_COLOR)
+
+'''
+UI LAYOUT
+'''
+
+top_frame = tk.Frame(root,bg = BACKGROUND_COLOR)
+top_frame.pack(pady=10)
+
+title_label = tk.Label(
+    top_frame,
+    text = "Ze Wheel",
+    font = ("Oregano",24),
+    fg = "white",
+    bg = BACKGROUND_COLOR
+)
+title_label.pack()
+
+middle_frame = tk.Frame(root,bg = BACKGROUND_COLOR)
+middle_frame.pack(pady=10)
+
+#Left Side Controls
+
+controls_frame = tk.Frame(middle_frame, bg = BACKGROUND_COLOR)
+controls_frame.pack(side = tk.LEFT, padx = 20)
+
+entry_label = tk.Label(
+    controls_frame,
+    text = "Add a choice",
+    font = ("Oregano",12),
+    fg = "white",
+    bg = BACKGROUND_COLOR
+)
+entry_label.pack(anchor = "w")
+
+choice_var = tk.StringVar()
+choice_entry = tk.Entry(controls_frame,textvariable = choice_var, width = 25)
+choice_entry.pack(pady = 5)
+
+def add_choice():
+    text = choice_var.get().strip()
+    if not text:
+        return
+    state.choices.append(text)
+    #assign color if new
+    if text not in state.color_map:
+        idx = len(state.color_map)%len(COLOR_PALETTE)
+        state.color_map[text] = COLOR_PALETTE[idx]
+    choice_var.set("")
+    refresh_choice_list()
+    draw_wheel()
+    
+add_button = tk.Button(
+    controls_frame,
+    text = "add choice",
+    command = add_choice()
+)
+add_button.pack(pady = 5)
+
+choices_label = tk.Label(
+    controls_frame,
+    text = "current choices: ",
+    font = ("Oregano", 12),
+    fg = "white",
+    bg = BACKGROUND_COLOR
+)
+choices_label.pack(anchor = "w", pady = 10)
+
+choices_listbox = tk.Listbox(
+    controls_frame,
+    width = 25,
+    height = 10
+)
+choices_listbox.pack(pady = 5)
+
+def refresh_choice_list():
+    choices_listbox.delete(0,tk.END)
+    for c in state.choices:
+        choices_listbox.insert(tk.END,c)
+
+def reset_wheel():
+    state.choices = []
+    state.color_map = {}
+    state.current_angle = 0.0
+    state.spinning = False
+    state.spin_speed = 0.0
+    refresh_choice_list()
+    draw_wheel()
+
+reset_button = tk.Button(
+    controls_frame,
+    text = "reset",
+    command = reset_wheel
+)
+reset_button.pack(pady = 5)
+
+#Spin Controls
+
+def start_spin():
+    if not state.choices:
+        messagebox.showinfo("No choices", "add at least one choice before spinning")
+        return
+    if state.spinning:
+        return #already spinning
+    #Random initial speed
+    state.spin_speed = random.uniform(15,25)  #degrees per frame
+    state.spinning = True
+    animate_spin()
+
+spin_button = tk.Button(
+    controls_frame,
+    text = "spin",
+    command = start_spin
+)
+spin_button.pack(pady = 10)
+
+#Canvas for wheel right side
+canvas_frame = tk.Frame(middle_frame,bg = BACKGROUND_COLOR)
+canvas_frame.pack(side = tk.RIGHT, padx = 20)
+canvas = tk.Canvas(
+    canvas_frame,
+    width = WINDOW_WIDTH//2+50,
+    height = WINDOW_HEIGHT//2+100,
+    bg = BACKGROUND_COLOR,
+    highlightthickness = 0
+)
+canvas.pack()
+
+
+
+
+
+
+
+root.mainloop()
