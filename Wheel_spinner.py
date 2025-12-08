@@ -7,14 +7,18 @@ import math
 CONFIG
 '''
 
-WINDOW_WIDTH = 800
+WINDOW_WIDTH = 900
 WINDOW_HEIGHT = 600
-WHEEL_RADIUS = 200
-WHEEL_CENTER = (400, 300)
+CANVAS_WIDTH = 400
+CANVAS_HEIGHT = 400
+WHEEL_RADIUS = min(CANVAS_WIDTH,CANVAS_HEIGHT)//2-40
+WHEEL_CENTER = (CANVAS_WIDTH//2,CANVAS_HEIGHT//2+20)
 BACKGROUND_COLOR = "#90E0F3"
 WHEEL_OUTLINE_COLOR = "#75F4F4"
 POINTER_COLOR = "#B8B3E9"
 COLOR_PALETTE = ["#D999B9","#D17B88"]
+
+
 
 '''
 APP STATE
@@ -92,7 +96,7 @@ def add_choice():
 add_button = tk.Button(
     controls_frame,
     text = "add choice",
-    command = add_choice()
+    command = add_choice
 )
 add_button.pack(pady = 5)
 
@@ -158,16 +162,101 @@ canvas_frame = tk.Frame(middle_frame,bg = BACKGROUND_COLOR)
 canvas_frame.pack(side = tk.RIGHT, padx = 20)
 canvas = tk.Canvas(
     canvas_frame,
-    width = WINDOW_WIDTH//2+50,
-    height = WINDOW_HEIGHT//2+100,
+    width = CANVAS_WIDTH,
+    height = CANVAS_HEIGHT,
     bg = BACKGROUND_COLOR,
     highlightthickness = 0
 )
 canvas.pack()
 
+'''
+DRAWING FUNCTIONS
+'''
 
+def draw_wheel():
+    canvas.delete("all")
+    cx,cy = WHEEL_CENTER
+    r = WHEEL_RADIUS
+    #background circle for wheel
+    canvas.create_oval(
+        cx-r,cy-r,cx+r,cy+r,
+        fill = "#957FEF",
+        outline = WHEEL_OUTLINE_COLOR,
+        width = 3
+    )
 
+    n = len(state.choices)
+    if n == 0:
+        canvas.create_text(
+            cx,cy,
+            text = "Add choices and press spin",
+            fill = "white",
+            font = ("Oregano",14)
+        )
+        draw_pointer()
+        return
+    slice_angle = 360/n
 
+    #drawing slices
+    for i, choice in enumerate(state.choices):
+        start_angle = state.current_angle + i * slice_angle
+        color = state.color_map.get(choice,"#ffffff")
+
+        #slice arc
+        canvas.create_arc(
+            cx-r,cy-r,cx+r,cy+r,
+            start = start_angle,
+            extent = slice_angle,
+            fill = color,
+            outline = WHEEL_OUTLINE_COLOR
+            )
+        
+        #text label
+        mid_angle_deg = start_angle + slice_angle/2
+        mid_angle_rad = math.radians(mid_angle_deg)
+
+        text_r = r*0.6
+        text_x = cx + text_r*math.cos(mid_angle_rad)
+        text_y = cy + text_r*math.sin(mid_angle_rad)
+
+        canvas.create_text(
+            text_x,text_y,
+            text = choice,
+            fill = "black",
+            font = ("Oregano",10)
+        )
+
+    draw_pointer()
+
+def draw_pointer():
+    #pointer at top center of the wheel
+    cx,cy = WHEEL_CENTER
+    pointer_height = 30
+    pointer_width = 30
+
+    base_y = cy - WHEEL_RADIUS-20
+    tip_y = base_y + pointer_height
+    left_x = cx-pointer_width//2
+    right_x = cx+ pointer_width//2
+    
+
+    canvas.create_polygon(
+        
+        left_x,base_y,
+        right_x,base_y,
+        cx,tip_y,
+        fill = POINTER_COLOR,
+        outline = "black"
+    )
+
+'''
+spin animation & winner logic
+'''
+
+def animate_spin():
+    
+
+def pick_winner():
 
 
 
