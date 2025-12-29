@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import messagebox
 import random
 import math
+from effects.sound import play_spin, stop_spin, play_win, play_button, play_confetti
+from effects.confetti import start_confetti
 
 '''
 CONFIG
@@ -92,6 +94,7 @@ def add_choice():
     choice_var.set("")
     refresh_choice_list()
     draw_wheel()
+    play_button()
     
 add_button = tk.Button(
     controls_frame,
@@ -138,6 +141,7 @@ def reset_wheel():
     state.spin_speed = 0.0
     refresh_choice_list()
     draw_wheel()
+    play_button()
 
 reset_button = tk.Button(
     controls_frame,
@@ -167,6 +171,8 @@ def start_spin():
     state.spin_speed = random.uniform(15,25)  #degrees per frame
     state.spinning = True
     animate_spin()
+    play_button()
+    play_spin()
 
 spin_button = tk.Button(
     controls_frame,
@@ -305,6 +311,7 @@ def animate_spin():
         state.spinning = False
         state.spin_speed = 0.0
         pick_winner()
+        stop_spin()
     else:
         #schedule the next animation frame
         root.after(30,animate_spin)
@@ -329,6 +336,8 @@ def pick_winner():
     if index >= n:
         index = n-1
     winner = state.choices[index]
+    play_win()
+    play_confetti()
     messagebox.showinfo("Winner", f"the wheel chose:\n\n{winner}")
 
 
