@@ -338,6 +338,13 @@ def pick_winner():
     winner = state.choices[index]
     play_win()
     play_confetti()
+    start_confetti(
+        canvas = canvas,
+        origin_xy = WHEEL_CENTER,
+        colors = COLOR_PALETTE,
+        count = 150,
+        duration_ms = 1500
+    )
     messagebox.showinfo("Winner", f"the wheel chose:\n\n{winner}")
 
 

@@ -16,7 +16,7 @@ confetti_sound = pygame.mixer.Sound(os.path.join(SOUND_DIR,"confetti-very-loud-e
 #volume tuning
 spin_sound.set_volume(0.75)
 button_sound.set_volume(0.5)
-confetti_sound.set_volume(2.5)
+confetti_sound.set_volume(0.8)
 
 #sound control functions
 def play_spin():
